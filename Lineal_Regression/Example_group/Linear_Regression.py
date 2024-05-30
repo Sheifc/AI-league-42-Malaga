@@ -34,14 +34,9 @@ data_joined = gpd.sjoin(data_geo, california, how="inner", predicate="within")
 # print(data_joined.head(10000))
 
 # Plotear los datos
-# Asignar colores según index_right
-unique_indices = data_joined['index_right'].unique()
-colors = plt.get_cmap('tab20', len(unique_indices))  # Usar una paleta de colores con suficiente variedad
-
-color_map = {index: colors(i) for i, index in enumerate(unique_indices)}
-
-# Añadir la columna de colores a data_joined
-data_joined['color'] = data_joined['index_right'].apply(lambda x: color_map[x])
+# Asignar colores según index_right utilizando una paleta de colores de Matplotlib
+num_categories = len(data_joined['index_right'].unique())
+cmap = plt.get_cmap('tab20', num_categories)  # Paleta de colores con suficientes categorías
 
 # Plotear los datos
 fig, ax = plt.subplots(figsize=(10, 10))
@@ -50,7 +45,6 @@ fig, ax = plt.subplots(figsize=(10, 10))
 california.plot(ax=ax, color='white', edgecolor='black')
 
 # Plotear los puntos de data_joined con colores según index_right
-for index, row in data_joined.iterrows():
-    ax.plot(row.geometry.x, row.geometry.y, 'o', color=row['color'], markersize=5)
+data_joined.plot(ax=ax, column='index_right', categorical=True, legend=True, cmap=cmap, markersize=5, legend_kwds={'title': 'County', 'fontsize': 'x-small', 'bbox_to_anchor': (1.02, 1)})
 
 plt.show()
