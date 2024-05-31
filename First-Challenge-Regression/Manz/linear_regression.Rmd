@@ -1,0 +1,210 @@
+---
+title: "linear_regression"
+author: "ManuelRojas"
+date: "2024-05-05"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+Cargamos los datos, eliminamos valores perdidos y detectamos que la columna ocean_proximity es categorica y la convertimos en binaria con dummies menos 1 variable para evitar los problemas de colinealidad.
+
+```{r}
+HouseDF <- read.csv("C:/Users/Manuel/Desktop/42/IA/housing.csv", sep = ",", header = TRUE)
+HouseDF <- HouseDF[complete.cases(HouseDF), ]
+dummies <- model.matrix(~ ocean_proximity - 1, data = HouseDF)
+HouseDF <- cbind(HouseDF, dummies)
+```
+
+Creamos el modelo de regresión para comprobar los supuestos. Aparecen NA probablemente a que los nombres de las variables dummies contienen espacios o caracteres especiales .
+
+```{r}
+model <- lm(median_house_value ~ ., data = HouseDF)
+summary(model)
+```
+Vamos analizar los 4 supuestos Linealidad, normalidad, homocedasticidad e independencia.
+
+Linealidad - Debe tender a 0 y es practicamente 0. Podemos comprobar que tenemos linealidad
+
+```{r}
+mean(model$residuals)
+```
+
+Normalidad
+Dado que el valor p es extremadamente pequeño (menor que cualquier nivel de significancia comúnmente utilizado, como 0.05), tenemos suficiente evidencia para rechazar la hipótesis nula de que los datos provienen de una distribución normal.
+
+
+tamanio_muestra <- 500
+indices_muestra <- sample(1:length(sresid), tamanio_muestra)
+muestra <- sresid[indices_muestra]  
+shapiro.test(muestra)  
+
+Homocedasticidad
+
+```{r}
+library(car)
+breusch_pagan_test <- ncvTest(model)
+print(breusch_pagan_test)
+
+```
+
+El test de Breusch-Pagan muestra una varianza no constante en los residuos del modelo, lo que sugiere heterocedasticidad
+
+
+```{r}
+model <- lm(median_house_value ~ ., data = HouseDF)
+summary(model)
+```
+```{r}
+r_squared <- summary(model)$r.squared
+
+cat("El coeficiente de determinación (R^2) es:", r_squared, "\n")
+```
+```{r}
+correlation_matrix <- cor(HouseDF[, -which(names(HouseDF) == "ocean_proximity")])
+
+print(correlation_matrix)
+
+```
+
+```{r}
+library(ggplot2)
+library(reshape2)
+ggplot(data = melt(correlation_matrix), aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0,
+                       limit = c(-1, 1), space = "Lab", name="Correlation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1)) +
+  coord_fixed()
+```
+Mapa de calor de correlaciones entre variables:
+Este gráfico muestra la fuerza y la dirección de la relación lineal entre todas las parejas de variables en tus datos. Cada celda en el mapa de calor representa el coeficiente de correlación entre dos variables. Los colores más claros indican una correlación positiva (más cercana a 1), mientras que los colores más oscuros indican una correlación negativa (más cercana a -1).
+
+
+longitude y latitude: Tienen una fuerte correlación negativa de aproximadamente -0.92, lo que indica que las ubicaciones más al oeste tienen latitudes más altas y viceversa.
+housing_median_age y median_house_value: Muestran una correlación positiva modesta de alrededor de 0.11, sugiriendo que los precios de las viviendas tienden a ser ligeramente más altos en áreas con mayor edad media de vivienda.
+total_rooms, total_bedrooms, population y households: Estas variables están altamente correlacionadas, lo que sugiere que áreas con más habitaciones probablemente también tengan más dormitorios, población y hogares.
+median_income y median_house_value: Existe una correlación positiva fuerte de aproximadamente 0.69, indicando que los precios de las viviendas tienden a ser más altos en áreas con ingresos medios más altos.
+
+
+Eliminamos los NA
+
+```{r}
+HouseDFnoNA <- na.omit(HouseDF)
+```
+
+```{r}
+model <- lm(median_house_value ~ ., data = HouseDF)
+summary(model)
+```
+Aún eliminando los NA no hay diferencia, continuamos con un 64%
+
+Normalizamos el
+
+```{r}
+library(caret)
+numeric_cols <- sapply(HouseDF, is.numeric)
+HouseDF_normalized <- HouseDF
+HouseDF_normalized[, numeric_cols] <- scale(HouseDF_normalized[, numeric_cols])
+summary(HouseDF_normalized)
+
+```
+```{r}
+library(ggplot2)
+ggplot(data = HouseDF_normalized, aes(x = median_income, y = median_house_value)) +
+  geom_point() +
+  labs(x = "Median Income", y = "Median House Value") +
+  ggtitle("Scatter Plot of Median Income vs. Median House Value")
+
+```
+
+```{r}
+model <- lm(median_house_value ~ ., data = HouseDF_normalized)
+summary(model)
+```
+Normalizando el modelo seguimos con el mismo 64,65%.
+
+Visualización de datos
+
+```{r}
+# Gráfico de dispersión de ingresos medios vs precios de viviendas
+ggplot(data = HouseDF, aes(x = median_income, y = median_house_value)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Median Income", y = "Median House Value") +
+  theme_minimal()
+```
+
+Gráficos de dispersión entre precios de viviendas y características significativas:
+Estos gráficos muestran la relación entre los precios de las viviendas y las características más significativas, como los ingresos medios y el número de habitaciones. Cada punto en el gráfico representa una observación y la posición en el eje x representa una característica significativa (por ejemplo, ingresos medios) y la posición en el eje y representa el precio de la vivienda
+
+
+```{r}
+# Gráfico de dispersión de número de habitaciones vs precios de viviendas
+ggplot(data = HouseDF, aes(x = total_rooms, y = median_house_value)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Total Rooms", y = "Median House Value") +
+  theme_minimal()
+
+```
+
+
+```{r}
+# Histograma de precios de viviendas
+ggplot(data = HouseDF, aes(x = median_house_value)) +
+  geom_histogram(binwidth = 10000) +
+  labs(x = "Median House Value", y = "Frequency") +
+  theme_minimal()
+```
+Histograma de la distribución de precios de viviendas:
+Este gráfico muestra la distribución de los precios de las viviendas en forma de un histograma. En el eje x se encuentran los precios de las viviendas, divididos en intervalos (bins), y en el eje y se muestra la frecuencia o la cantidad de observaciones en cada intervalo.
+
+
+```{r}
+residuals <- residuals(model)  
+
+# Gráfico de residuales vs valores ajustados
+ggplot(data = data.frame(residuals = residuals, fitted = fitted(model)), aes(x = fitted, y = residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(x = "Fitted Values", y = "Residuals") +
+  theme_minimal()
+```
+Gráfico de residuales vs valores ajustados: Muestra los residuales en el eje y y los valores ajustados por el modelo en el eje x. Te permite evaluar si los residuales tienen una relación sistemática con los valores ajustados
+
+```{r}
+# Gráfico de residuales vs valores observados
+ggplot(data = data.frame(residuals = residuals, observed = HouseDF$median_house_value), aes(x = observed, y = residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(x = "Observed Values", y = "Residuals") +
+  theme_minimal()
+```
+Gráfico de residuales vs variables predictoras: Muestra los residuales en el eje y y una variable predictora en el eje x. Puedes utilizar esto para evaluar si los residuales tienen una relación sistemática con las variables predictoras y detectar posibles problemas de especificación del modelo.
+
+```{r}
+# Instala y carga las bibliotecas necesarias
+library(osmdata)
+library(ggplot2)
+
+HouseDF$predicted_value <- predict(model, newdata = HouseDF)
+
+area <- opq(bbox = c(left = -122.6, bottom = 37.4, right = -121.9, top = 37.9))
+map_data <- osmdata_sf(area)
+
+mapa <- ggplot() +
+  geom_sf(data = map_data$osm_polygons, fill = "lightblue") +
+  geom_sf(data = map_data$osm_lines, color = "blue") +
+  geom_sf(data = map_data$osm_points, color = "red") +
+  geom_point(data = HouseDF, aes(x = longitude, y = latitude, color = predicted_value)) +
+  scale_color_gradient(low = "blue", high = "red") +
+  labs(color = "Predicted Median House Value") +
+  theme_void()
+
+# Visualiza el mapa
+print(mapa)
+
+```
+
