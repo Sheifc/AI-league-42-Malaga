@@ -2,11 +2,15 @@
  
 # I CHALLENGE OF THE TOURNAMENT
 # IA 42 MALAGA LEAGUE
- 
+
+</div>
+
 ![Regression](https://github.com/Sheifc/AI-league-42-Malaga/assets/115345487/1ec0a988-76a5-49fe-8260-83c23563663a)
 
 “By @sheferna – for the students of the AI league of 42 Málaga, April 29th, 2024, Enjoy!”
 
+<div align="justify">
+ 
 # Linear Regression - California Housing Prices
 
 ## Introduction
