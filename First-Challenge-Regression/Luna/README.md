@@ -4,8 +4,8 @@ Welcome to the repository of the exciting linear regression project by the 42 M�
 
 ## 📚 Notebooks
 
-- [Simple Linear Regression](regression_simple.ipynb): Discover how to perform simple linear regression step by step!
-- [Multiple Linear Regression](regression_multiple.ipynb): Learn how to implement multiple linear regression and explore its advantages!
+- [Simple Linear Regression](Regresion_Lineal_Simple.ipynb): Discover how to perform simple linear regression step by step!
+- [Multiple Linear Regression](Regresion_Lineal_Multiple.ipynb): Learn how to implement multiple linear regression and explore its advantages!
 
 ## 📊 Conclusions
 
