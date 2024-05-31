@@ -85,3 +85,7 @@ Add your assignment files to this folder. At a minimum, if you have chosen Pytho
 2. Make any requested changes and push them to your branch if necessary.
 
 Congratulations! You have successfully submitted your assignment via a pull request.
+
+For more details, github docs is the answer: 
+
+https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork
