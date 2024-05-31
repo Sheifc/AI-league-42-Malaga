@@ -48,7 +48,7 @@ Follow these steps to submit your assignment to the "First-challenge" folder in 
 ```
 3. Replace YOUR_TEAM_NAME with the name of your team.
 
-Add your assignment files to this folder. At a minimum, you must include:
+Add your assignment files to this folder. At a minimum, if you have chosen Python as we recommended, you must include:
 - An report that includes the code with explanations interspersed in the text.
 - A requirements.txt file listing all dependencies required to run your code.
 
