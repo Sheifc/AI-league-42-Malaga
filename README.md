@@ -1,7 +1,5 @@
 # AI-league-42-Malaga
 
-You're correct that you can use `git branch` to create a branch. Here's the revised README with the appropriate use of `git branch`:
-
 # README for Submitting a Pull Request
 
 ## How to Submit Your Assignment via Pull Request
@@ -40,11 +38,20 @@ Follow these steps to submit your assignment to the "First-challenge" folder in 
 
 ### Step 4: Add Your Assignment
 
-1. Navigate to the `First-challenge` folder:
-   ```bash
+1. Navigate to the First-challenge folder:
+```bash
    cd First-challenge
-   ```
-2. Add your assignment files to this folder.
+```
+2. Create a new folder named after your team:
+```bash
+   mkdir YOUR_TEAM_NAME
+```
+3. Replace YOUR_TEAM_NAME with the name of your team.
+
+Add your assignment files to this folder. At a minimum, you must include:
+- An report that includes the code with explanations interspersed in the text.
+- A requirements.txt file listing all dependencies required to run your code.
+
 
 ### Step 5: Commit Your Changes
 
