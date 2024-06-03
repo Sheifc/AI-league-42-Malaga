@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # AI-league-42-Malaga
 
 # README for Submitting a Pull Request
