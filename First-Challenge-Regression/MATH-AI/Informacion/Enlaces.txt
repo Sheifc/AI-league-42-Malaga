@@ -1,0 +1,2 @@
+https://datatab.es/tutorial/linear-regression
+https://aws.amazon.com/es/what-is/linear-regression/#:~:text=La%20regresi%C3%B3n%20lineal%20es%20una,independiente%20como%20una%20ecuaci%C3%B3n%20lineal
